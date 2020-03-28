@@ -3,75 +3,69 @@ import json
 import requests
 from pprint import pprint
 
-logger = logging.getLogger()
-logger.setLevel(logging.INFO)
+#logger = logging.getLogger()
+#logger.setLevel(logging.INFO)
+#https://rapidapi.com/astsiatsko/api/coronavirus-monitor?endpoint=apiendpoint_17582575-ba9e-4539-b08e-6a7e24969470
 
-class State:
-    def __init__(self, state):
-        self.state = state
+class StateData:
+    def __init__(self):
         self.url = 'http://coronavirusapi.com/getTimeSeries/'
+        self.stateList = ["AL", "AK", "AZ", "AR", "CA", "CO", "CT", "DC", "DE", "FL", "GA", "HI", "ID", "IL", "IN", "IA", "KS", "KY", "LA", "ME", "MD", "MA", "MI", "MN", "MS", "MO", "MT", "NE", "NV", "NH", "NJ", "NM", "NY", "NC", "ND", "OH", "OK", "OR", "PA", "RI", "SC", "SD", "TN", "TX", "UT", "VT", "VA", "WA", "WV", "WI", "WY"]
+        self.stateData = {}
+        self.buildStates()
 
     def getStateData(self):
-        url = self.url + self.state.upper()
+        return self.stateData
+
+    def constructStateData(self, state):
+        url = self.url + state.upper()
         resp = requests.get(url)
-        json = self.buildStateJSON(resp.text)
-        return json
+        clean = resp.text.split('\n')[-1]
+        cleaner = clean.split(',')[2]
+        return cleaner
 
-    def buildStateJSON(self, data):
-        jsawn = {}
-        jsawn[self.state] = data
-        return json.dumps(jsawn)
+    def buildStates(self):
+        """Simple function to iterate list argument to pull data"""
+        stateData = []
+        for state in self.stateList:
+            data = self.constructStateData(state)
+            self.stateData[state] = data
 
-class Country:
+class CountryData:
     def __init__(self):
         self.url = 'https://api.covid19api.com/'
+        self.countriesTotals = {}
+        #self.countriesMapping = self.parseCountriesMapping(jsonFile)
 
-    def getCountries(self):
+    def getCountriesTotal(self):
+        return self,countriesTotal
+
+    def getCountriesMapping(self):
+        return self.countriesMapping
+
+    def parseCountriesMapping(self, jsonFile):
+        return 0
+
+    def getCountriesSummary(self):
         payload = {}
         headers = {}
-        curl = self.url + "countries"
+        curl = self.url + "summary"
         countries = requests.request("GET", curl, headers=headers, data = payload)
         return countries.json()
-
-    def getCurrentLive(self):
-        payload = {}
-        headers = {}
-        countries = self.getCountries()
-        confirmed = []
-        for each in countries:
-            curl = self.url + "country/" + each["Slug"] + "/status/confirmed"
-            byCountry = requests.request("GET", curl, headers=headers, data = payload)
-            confirmed.append(byCountry.text)
-        return confirmed
 
     def getCountryTotals(self):
         payload = {}
         headers = {}
-        countries = self.getCountries()
-        totals = []
-        for each in countries:
-            curl = self.url + "total/country/" + each["Slug"] + "/status/confirmed"
-            totalsByCountry = requests.request("GET", curl, headers=headers, data = payload)
-            totals.append(totalsByCountry.text)
-        return totals
-
-def buildStates(states):
-    """Simple function to iterate list argument to pull data"""
-    stateData = []
-    for state in states:
-        state = State(state)
-        data = state.getStateData()
-        stateData.append(data)
-    return stateData
+        countries = self.getCountriesSummary()
+        for each in countries["Countries"]:
+            self.countriesTotals[each['Country']] = each
+        return self.countriesTotals
 
 def main():
-    states = ['CO', 'MI', 'NY', 'CA']
-    #stateData = buildStates(states)
-    countryData = Country()
-    #confirmed = countryData.getCurrentLive()
+    stateData = StateData()
+    print (stateData.getStateData())
+    countryData = CountryData()
     totals = countryData.getCountryTotals()
     print(totals)
 
-    #print(stateData)
 main()
-
