@@ -7,6 +7,10 @@ from pprint import pprint
 #logger.setLevel(logging.INFO)
 #https://rapidapi.com/astsiatsko/api/coronavirus-monitor?endpoint=apiendpoint_17582575-ba9e-4539-b08e-6a7e24969470
 
+#{"state":"New York","usa_deaths":[{"state_name":"New York City New York","death_cases":"366","record_date":"2020-03-27"},{"state_name":"Unassigned New York","death_cases":"87","record_date":"2020-03-27"},{"state_name":"Suffolk New York","death_cases":"22","record_date":"2020-03-27"},{"state_name":"Nassau New York","death_cases":"19","record_date":"2020-03-27"},{"state_name":"Rockland New York","death_cases":"7","record_date":"2020-03-27"},{"state_name":"Erie New York","death_cases":"5","record_date":"2020-03-27"},{"state_name":"Monroe New York","death_cases":"4","record_date":"2020-03-27"},{"state_name":"Broome New York","death_cases":"2","record_date":"2020-03-27"}],"usa_cases_by_state":[{"state_name":"New York","cases_number":"44745","record_date":"2020-03-27"},{"state_name":"New York City New York","cases_number":"25573","record_date":"2020-03-27"},{"state_name":"Westchester New York","cases_number":"7187","record_date":"2020-03-27"},{"state_name":"Nassau New York","cases_number":"4657","record_date":"2020-03-27"},{"state_name":"Suffolk New York","cases_number":"3385","record_date":"2020-03-27"},{"state_name":"Rockland New York","cases_number":"1457","record_date":"2020-03-27"},
+
+#{"country":"South Africa","latest_stat_by_country":[{"id":"284807","country_name":"South Africa","total_cases":"1,170","new_cases":"","active_cases":"1,138","total_deaths":"1","new_deaths":"","total_recovered":"31","serious_critical":"7","region":null,"total_cases_per1m":"20","record_date":"2020-03-28 16:10:02.321"}]}
+
 class StateData:
     def __init__(self):
         self.url = 'http://coronavirusapi.com/getTimeSeries/'
@@ -62,8 +66,8 @@ class CountryData:
         return self.countriesTotals
 
 def main():
-    stateData = StateData()
-    print (stateData.getStateData())
+    #stateData = StateData()
+    #print (stateData.getStateData())
     countryData = CountryData()
     totals = countryData.getCountryTotals()
     print(totals)
