@@ -1,15 +1,14 @@
 import logging
 import json
 import requests
+from flask import Flask, request
 from pprint import pprint
-
+#https://developers.facebook.com/docs/messenger-platform/getting-started/quick-start/
+#https://www.twilio.com/blog/2017/12/facebook-messenger-bot-python.html
 #logger = logging.getLogger()
 #logger.setLevel(logging.INFO)
-#https://rapidapi.com/astsiatsko/api/coronavirus-monitor?endpoint=apiendpoint_17582575-ba9e-4539-b08e-6a7e24969470
 
-#{"state":"New York","usa_deaths":[{"state_name":"New York City New York","death_cases":"366","record_date":"2020-03-27"},{"state_name":"Unassigned New York","death_cases":"87","record_date":"2020-03-27"},{"state_name":"Suffolk New York","death_cases":"22","record_date":"2020-03-27"},{"state_name":"Nassau New York","death_cases":"19","record_date":"2020-03-27"},{"state_name":"Rockland New York","death_cases":"7","record_date":"2020-03-27"},{"state_name":"Erie New York","death_cases":"5","record_date":"2020-03-27"},{"state_name":"Monroe New York","death_cases":"4","record_date":"2020-03-27"},{"state_name":"Broome New York","death_cases":"2","record_date":"2020-03-27"}],"usa_cases_by_state":[{"state_name":"New York","cases_number":"44745","record_date":"2020-03-27"},{"state_name":"New York City New York","cases_number":"25573","record_date":"2020-03-27"},{"state_name":"Westchester New York","cases_number":"7187","record_date":"2020-03-27"},{"state_name":"Nassau New York","cases_number":"4657","record_date":"2020-03-27"},{"state_name":"Suffolk New York","cases_number":"3385","record_date":"2020-03-27"},{"state_name":"Rockland New York","cases_number":"1457","record_date":"2020-03-27"},
-
-#{"country":"South Africa","latest_stat_by_country":[{"id":"284807","country_name":"South Africa","total_cases":"1,170","new_cases":"","active_cases":"1,138","total_deaths":"1","new_deaths":"","total_recovered":"31","serious_critical":"7","region":null,"total_cases_per1m":"20","record_date":"2020-03-28 16:10:02.321"}]}
+app = Flask(__name__)
 
 class StateData:
     def __init__(self):
@@ -18,7 +17,7 @@ class StateData:
         self.stateData = {}
         self.buildStates()
 
-    def getStateData(self):
+    def getStateTotals(self):
         return self.stateData
 
     def constructStateData(self, state):
@@ -65,11 +64,30 @@ class CountryData:
             self.countriesTotals[each['Country']] = each
         return self.countriesTotals
 
-def main():
-    #stateData = StateData()
-    #print (stateData.getStateData())
-    countryData = CountryData()
-    totals = countryData.getCountryTotals()
-    print(totals)
+countryData = CountryData()
+stateData = StateData()
 
-main()
+@app.route("/countryTotals", methods=['GET', 'POST'])
+def getCountryData():
+    global countryData
+    return str(countryData.getCountryTotals())
+
+@app.route("/stateTotals", methods=['GET', 'POST'])
+def getStateData():
+    global stateData
+    return str(stateData.getStateTotals())
+
+
+# def main():
+#     global countryData
+#     #stateData = StateData()
+#     #print (stateData.getStateData())
+#     #countryData = CountryData()
+#     totals = countryData.getCountryTotals()
+#     print(totals)
+#
+# main()
+
+
+if __name__ == "__main__":
+    app.run(debug=True)
